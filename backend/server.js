@@ -26,17 +26,24 @@ mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('Connected to MongoDB Atlas'))
-.catch(err => console.error('❌ Connection error:', err));
+  .then(() => console.log('Connected to MongoDB Atlas'))
+  .catch(err => console.error('❌ Connection error:', err));
 
 const db = mongoose.connection;
 // Define a generic function to get a collection
 function getCollection(name) {
-    return db.collection(name);
-  }
-  
-  // ✅ Start the Server
-  const port = process.env.PORT || 27017;
-  app.listen(port, () => {
-    console.log(`🚀 Server running on port ${port}`);
-  });
+  return db.collection(name);
+}
+
+// ✅ API Routes
+app.get("/", (req, res) => {
+  res.send("Select a collection, e.g., /collection/messages");
+});
+
+
+
+// ✅ Start the Server
+const port = process.env.PORT || 27017;
+app.listen(port, () => {
+  console.log(`🚀 Server running on port ${port}`);
+});
