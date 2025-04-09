@@ -62,6 +62,67 @@ app.get("/", (req, res) => {
   }
 });
 
+// Fetch a single document by ID
+app.get("/collection/:collectionName/:id", async (req, res, next) => {
+  try {
+    const collection = getCollection(req.params.collectionName);
+    const result = await collection.findOne({ _id: new ObjectId(req.params.id) });
+    res.send(result);
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Update a document by ID
+app.put("/collection/:collectionName/:id", async (req, res, next) => {
+  try {
+    const collection = getCollection(req.params.collectionName);
+    const result = await collection.updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: req.body }
+    );
+    res.send(result.matchedCount === 1 ? { msg: "success" } : { msg: "error" });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Delete a document by ID
+app.delete("/collection/:collectionName/:id", async (req, res, next) => {
+  try {
+    const collection = getCollection(req.params.collectionName);
+    const result = await collection.deleteOne({ _id: new ObjectId(req.params.id) });
+    res.send(result.deletedCount === 1 ? { msg: "success" } : { msg: "error" });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ✅ Place Order API
+app.post("/place-order", async (req, res) => {
+  try {
+    const ordersCollection = getCollection("orders");
+    const order = req.body;
+
+    if (
+      !order.firstName || !order.lastName || !order.address || 
+      !order.city || !order.state || !order.zip || 
+      !order.phone || !order.cart || order.cart.length === 0
+    ) {
+      return res.status(400).send({ msg: "Invalid order data" });
+    }
+
+    order.date = new Date(); 
+
+    const result = await ordersCollection.insertOne(order);
+    res.send({ msg: "Order placed successfully", orderId: result.insertedId });
+  } catch (err) {
+    console.error("Error placing order:", err);
+    res.status(500).send({ msg: "Failed to place order" });
+  }
+});
+
+
 // ✅ Start the Server
 const port = process.env.PORT || 27017;
 app.listen(port, () => {
