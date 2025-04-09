@@ -28,6 +28,12 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 .then(() => console.log('Connected to MongoDB Atlas'))
 .catch(err => console.error('❌ Connection error:', err));
+
+const db = mongoose.connection;
+// Define a generic function to get a collection
+function getCollection(name) {
+    return db.collection(name);
+  }
   
   // ✅ Start the Server
   const port = process.env.PORT || 27017;
