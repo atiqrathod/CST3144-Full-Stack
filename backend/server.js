@@ -19,6 +19,13 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+// ✅ Connect to MongoDB Atlas using mongoose
+mongoose.connect(process.env.MONGO_URI, {
+  dbName: 'webstore', // Specify the database name
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   
   // ✅ Start the Server
   const port = process.env.PORT || 27017;
