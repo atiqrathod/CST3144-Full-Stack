@@ -40,7 +40,16 @@ app.get("/", (req, res) => {
   res.send("Select a collection, e.g., /collection/messages");
 });
 
-
+ // Fetch all documents from a collection
+ app.get("/collection/:collectionName", async (req, res, next) => {
+  try {
+    const collection = getCollection(req.params.collectionName);
+    const results = await collection.find({}).toArray();
+    res.send(results);
+  } catch (e) {
+    next(e);
+  }
+});
 
 // ✅ Start the Server
 const port = process.env.PORT || 27017;
