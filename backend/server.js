@@ -51,6 +51,17 @@ app.get("/", (req, res) => {
   }
 });
 
+ // Insert a new document into a collection
+ app.post("/collection/:collectionName", async (req, res, next) => {
+  try {
+    const collection = getCollection(req.params.collectionName);
+    const result = await collection.insertOne(req.body);
+    res.send(result.ops[0]);
+  } catch (e) {
+    next(e);
+  }
+});
+
 // ✅ Start the Server
 const port = process.env.PORT || 27017;
 app.listen(port, () => {
