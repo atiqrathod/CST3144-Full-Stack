@@ -122,6 +122,24 @@ app.post("/place-order", async (req, res) => {
   }
 });
 
+// Search route (GET) to log the search query and return search results
+app.get("/search", async (req, res) => {
+  const searchTerm = req.query.query;
+  console.log("Received search query:", searchTerm); // 👈 Log the search query to the terminal
+
+  try {
+    const results = await db
+      .collection("products")
+      .find({ title: { $regex: searchTerm, $options: "i" } })
+      .toArray();
+
+    res.json(results);
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({ error: "Search failed" });
+  }
+});
+
 
 // ✅ Start the Server
 const port = process.env.PORT || 27017;
